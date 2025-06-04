@@ -1,3 +1,4 @@
+using Scalar.AspNetCore;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
@@ -24,6 +26,8 @@ app.MapGet("/weatherforecast/{days}", (int days, IMessageBus bus) =>
     return bus.InvokeAsync<IEnumerable<WeatherForecast>>(new RequestWeather(days));
 })
 .WithName("GetWeatherForecast");
+
+app.MapGet("/", () => Results.Redirect("/scalar/")).ExcludeFromDescription();
 
 app.Run();
 
